@@ -101,6 +101,35 @@ details p{color:var(--dim);padding:0 0 20px;max-width:700px}
 footer{border-top:1px solid var(--line);padding:28px 0 40px}
 footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--mute);font-size:12px}
 footer a{color:var(--dim);text-decoration:none}footer a:hover{color:#fff}
+.tick{border-top:1px solid var(--line);overflow:hidden;white-space:nowrap;padding:14px 0;background:var(--bg2)}
+.tick div{display:inline-block;animation:tick 46s linear infinite;font:700 12px/1 var(--mono);letter-spacing:.2em;color:var(--dim)}
+.tick i{font-style:normal;color:#fff;margin:0 22px}
+@keyframes tick{to{transform:translateX(-50%)}}
+.scene{border:1px solid var(--line);background:var(--bg2);margin-bottom:16px;position:relative}
+.scene canvas{display:block;width:100%;height:220px}
+.scene span{position:absolute;right:16px;bottom:12px}
+.sim{display:grid;grid-template-columns:1fr 1.1fr;gap:16px;align-items:start}
+.sbox{border:1px solid var(--line);background:var(--bg2);padding:20px}
+.sbox label{display:block;margin-bottom:8px}
+.srch{display:flex;gap:8px;border:1px solid var(--line2);padding:6px;margin-bottom:12px}
+.srch:focus-within{border-color:#fff}
+.srch input{flex:1;min-width:0;background:none;border:0;outline:0;padding:0 8px;font:500 13px/1 var(--mono)}
+.picks{display:flex;flex-wrap:wrap;gap:6px;min-height:34px;margin-bottom:22px}
+.picks button{border:1px solid var(--line2);padding:8px 10px;font:600 12px/1 var(--mono);color:var(--dim)}
+.picks button[aria-pressed=true]{background:#fff;color:#000;border-color:#fff}
+.picks em{font-style:normal;color:var(--mute);font-size:12px;padding:8px 0}
+.rng{display:flex;justify-content:space-between;align-items:baseline;margin:18px 0 8px}
+.rng b{font:800 18px/1 var(--mono)}
+input[type=range]{width:100%;accent-color:#fff}
+.out{border:1px solid var(--line)}
+.out .kv b{font-weight:700}
+.out .big{padding:22px 18px;border-bottom:1px solid var(--line)}
+.out .big b{display:block;font:800 34px/1.1 var(--mono);margin-top:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.out .big span{display:block;color:var(--mute);font-size:12px;margin-top:6px}
+.rv{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+.resbar{display:flex;justify-content:flex-end;margin-top:10px;max-width:760px}
+@media (max-width:860px){.sim{grid-template-columns:1fr}}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#fff;color:#000;font:500 13px/1.4 var(--mono);padding:10px 16px;z-index:50;max-width:calc(100% - 32px)}
 [hidden]{display:none!important}
 .up{color:#fff}.dn{color:#ff6b6b}
@@ -112,7 +141,7 @@ footer a{color:var(--dim);text-decoration:none}footer a:hover{color:#fff}
 <body>
 <nav><div class="wrap">
   <a class="logo" href="#top" aria-label="host home"><svg width="26" height="20" viewBox="0 0 32 24" aria-hidden="true"><circle cx="14" cy="12" r="8" fill="none" stroke="#fff" stroke-width="2.6"/><ellipse cx="15" cy="13" rx="14" ry="4" fill="none" stroke="#fff" stroke-width="1.4" transform="rotate(-20 15 13)"/><circle cx="27.5" cy="5" r="2.4" fill="#fff"/></svg>host</a>
-  <div class="links"><a href="#giant">Giant</a><a href="#drops">Drops</a><a href="#check">Check</a><a href="#faq">FAQ</a></div>
+  <div class="links"><a href="#giant">Giant</a><a href="#drops">Drops</a><a href="#check">Check</a><a href="#sim">Simulate</a><a href="#faq">FAQ</a></div>
   <button class="chip" id="ca" type="button" title="copy contract address">CA <span id="caV">—</span></button>
   <a class="btn o" id="buy" href="#" target="_blank" rel="noopener" hidden>Buy</a>
 </div></nav>
@@ -129,10 +158,11 @@ footer a{color:var(--dim);text-decoration:none}footer a:hover{color:#fff}
       <div><span class="cap">Wallets paid</span><b id="lPaid">—</b></div>
     </div>
   </div>
+  <div class="tick" aria-hidden="true"><div>PAIR WITH ANY COIN<i>/</i>HALF THE FEES BUY THE GIANT<i>/</i>TOP 500 HOLDERS<i>/</i>EVERY DROP ON-CHAIN<i>/</i>THE MOON ORBITS<i>/</i>PAIR WITH ANY COIN<i>/</i>HALF THE FEES BUY THE GIANT<i>/</i>TOP 500 HOLDERS<i>/</i>EVERY DROP ON-CHAIN<i>/</i>THE MOON ORBITS<i>/</i></div></div>
 
   <section id="giant"><div class="wrap">
     <div class="sh"><div><span class="cap">01 · The giant</span><h2>Who we orbit</h2></div><span class="note" id="gNote"></span></div>
-    <div class="grid2">
+    <div class="grid2 rv">
       <div class="box">
         <div class="gsym"><b id="gSym">—</b><span id="gMint">—</span></div>
         <div class="kv"><span>Price</span><b id="gPx">—</b></div>
@@ -167,11 +197,13 @@ footer a{color:var(--dim);text-decoration:none}footer a:hover{color:#fff}
       <div><span class="cap">Received</span><b id="rR">—</b><span id="rRs">—</span></div>
       <div><span class="cap">Holds $HOST</span><b id="rH">—</b><span id="rHs">—</span></div>
     </div>
+    <div class="resbar" id="rbar" hidden><button class="btn q" id="rcard" type="button">Save card</button></div>
   </div></section>
 
   <section id="how"><div class="wrap">
     <div class="sh"><div><span class="cap">04 · How</span><h2>Three moves</h2></div></div>
-    <div class="steps">
+    <div class="scene rv"><canvas id="scene" aria-label="the moon drops the giant on its holders" role="img"></canvas><span class="cap" id="sceneN">tap to drop</span></div>
+    <div class="steps rv">
       <div class="step"><pre>  <b>[$HOST]</b>
     |  buy / sell
     v
@@ -186,9 +218,31 @@ footer a{color:var(--dim);text-decoration:none}footer a:hover{color:#fff}
     </div>
   </div></section>
 
+  <section id="sim"><div class="wrap">
+    <div class="sh"><div><span class="cap">05 · Simulate</span><h2>Feed the moon</h2></div><span class="note">live prices, your numbers</span></div>
+    <div class="sim rv">
+      <div class="sbox">
+        <span class="cap">Try any giant</span>
+        <form class="srch" id="sform" autocomplete="off" novalidate style="margin-top:12px"><input id="sq" spellcheck="false" aria-label="search a coin" placeholder="ticker, name or mint"><button class="btn p" type="submit">Find</button></form>
+        <div class="picks" id="picks"><em>—</em></div>
+        <div class="rng"><span class="cap">$HOST volume a day</span><b id="vV">—</b></div>
+        <input type="range" id="vol" min="0" max="100" value="50" aria-label="daily volume">
+        <div class="rng"><span class="cap">Fee</span><b id="fV">—</b></div>
+        <input type="range" id="fee" min="1" max="20" value="10" aria-label="fee percent">
+      </div>
+      <div class="out">
+        <div class="big"><span class="cap">Each top-500 holder gets, per day</span><b id="oH">—</b><span id="oHs">—</span></div>
+        <div class="kv"><span>Fees a day</span><b id="oF">—</b></div>
+        <div class="kv"><span>Buys the giant</span><b id="oG">—</b></div>
+        <div class="kv"><span>Per holder, 30 days</span><b id="oM">—</b></div>
+        <div class="kv"><span>Giant price</span><b id="oP">—</b></div>
+      </div>
+    </div>
+  </div></section>
+
   <section id="faq"><div class="wrap">
-    <div class="sh"><div><span class="cap">05 · FAQ</span><h2>Questions</h2></div></div>
-    <div class="faq">
+    <div class="sh"><div><span class="cap">06 · FAQ</span><h2>Questions</h2></div></div>
+    <div class="faq rv">
       <details><summary>Who gets the drops?</summary><p>The giant's top 500 holders at the snapshot. Pools, exchanges and burn addresses are skipped.</p></details>
       <details><summary>Why pay another coin's holders?</summary><p>Because they notice. Every drop lands in hundreds of wallets that already believe in the giant, with $HOST's name on it.</p></details>
       <details><summary>How do I know it happened?</summary><p>Each round is sent from the drop wallet with the memo host:drop:&lt;round&gt;. This page reads them straight from the chain.</p></details>
@@ -405,10 +459,86 @@ var HERO = (function () {
     var b = CFG.drop && CFG.giant ? getJ("/api/drops?w=" + w).then(function (j) {
       var n = (j.rounds || []).filter(function (r) { return r.mine > 0; }).length;
       $("rR").textContent = j.received ? amt(j.received) + " " + s : "—"; $("rRs").textContent = n ? "in " + n + " round" + (n > 1 ? "s" : "") + (px ? " · " + usd(j.received * px) : "") : "not in a round yet";
+      lastCheck = { w: w, got: j.received || 0, sym: s, rounds: n, usd: px && j.received ? usd(j.received * px) : null }; $("rbar").hidden = false;
     }, function () { $("rR").textContent = "—"; $("rRs").textContent = "couldn't read right now"; }) : Promise.resolve(($("rR").textContent = "—") && ($("rRs").textContent = "no drops yet"));
     var c = CFG.mint ? held(w, CFG.mint).then(function (v) { $("rH").textContent = amt(v); $("rHs").textContent = MK && MK.priceUsd ? usd(v * MK.priceUsd) : "—"; }, function () { $("rH").textContent = "—"; $("rHs").textContent = "couldn't read right now"; }) : Promise.resolve(($("rH").textContent = "—") && ($("rHs").textContent = "—"));
     Promise.all([a, b, c]).then(function () { $("cbtn").disabled = false; $("cbtn").textContent = "Check"; });
   });
+
+  // ---------- the drop scene: the moon rains the giant on its holders
+  (function () {
+    var cv = $("scene"), c = cv.getContext("2d"), W = 0, H = 220, hs = [], fall = [], t0 = 0, n = 0, still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function size() { W = cv.parentNode.clientWidth; var d = Math.min(2, window.devicePixelRatio || 1); cv.width = W * d; cv.height = H * d; c.setTransform(d, 0, 0, d, 0, 0); var k = Math.max(8, Math.min(24, Math.floor(W / 44))); hs = []; for (var i = 0; i < k; i++) hs.push({ x: (i + 0.5) * W / k, glow: 0 }); }
+    function drop(x) { var m = moonXY(performance.now()); var tgt = x == null ? hs[(Math.random() * hs.length) | 0] : hs.reduce(function (a, b) { return Math.abs(b.x - x) < Math.abs(a.x - x) ? b : a; }); fall.push({ x: m.x, y: m.y + 14, tx: tgt.x, h: tgt, t: 0 }); }
+    function moonXY(now) { var a = now / 4200; return { x: W / 2 + Math.cos(a) * W * 0.32, y: 46 + Math.sin(a) * 14 }; }
+    function draw(now) {
+      c.clearRect(0, 0, W, H); c.font = "700 13px 'JetBrains Mono','DejaVu Sans Mono',monospace"; c.textAlign = "center"; c.textBaseline = "middle";
+      for (var s = 0; s < 40; s++) { var sx = (s * 97.3) % W, sy = (s * 53.7) % 150; c.fillStyle = "rgba(160,160,160," + (0.15 + ((s * 7) % 5) / 14) + ")"; c.fillText(s % 7 ? "." : "+", sx, sy); }
+      var m = moonXY(now);
+      c.fillStyle = "rgba(255,255,255,.95)"; ["  @@ ", " @@  ", "@@   ", " @@  ", "  @@ "].forEach(function (r, i) { c.fillText(r, m.x, m.y - 26 + i * 13); });
+      fall = fall.filter(function (f) { f.t += 0.018; var x = f.x + (f.tx - f.x) * f.t, y = f.y + (H - 34 - f.y) * f.t * f.t; for (var k = 1; k < 5; k++) { c.fillStyle = "rgba(255,255,255," + (0.5 - k * 0.1) + ")"; c.fillText(":", x - (f.tx - f.x) * 0.018 * k * 2, y - k * 9); } c.fillStyle = "#fff"; c.fillText("*", x, y); if (f.t >= 1) { f.h.glow = 1; n++; $("sceneN").textContent = n + " dropped"; return false; } return true; });
+      hs.forEach(function (h) { h.glow = Math.max(0, h.glow - 0.008); c.fillStyle = "rgba(255,255,255," + (0.35 + h.glow * 0.65) + ")"; c.fillText(h.glow > 0.2 ? "@" : "o", h.x, H - 26); if (h.glow > 0.05) { c.fillStyle = "rgba(255,255,255," + h.glow * 0.5 + ")"; c.fillText("+1", h.x, H - 44 - (1 - h.glow) * 14); } });
+      c.fillStyle = "rgba(255,255,255,.18)"; c.fillText(new Array(Math.ceil(W / 8)).join("-"), W / 2, H - 10);
+      if (!still) { if (now - t0 > 900) { t0 = now; drop(); } requestAnimationFrame(draw); }
+    }
+    size(); window.addEventListener("resize", size);
+    cv.addEventListener("click", function (e) { var r = cv.getBoundingClientRect(); drop(e.clientX - r.left); });
+    requestAnimationFrame(draw);
+  })();
+
+  // ---------- simulator: live giant price, your volume and fee
+  var SG = null;
+  function vol() { return Math.round(Math.pow(10, 3 + Number($("vol").value) / 100 * 4)); }
+  function fee() { return Number($("fee").value) / 10; }
+  function sim() {
+    var v = vol(), f = fee(), fees = v * f / 100, giant = fees / 2, per = giant / 500, px = SG && SG.priceUsd;
+    $("vV").textContent = usd(v); $("fV").textContent = f.toFixed(1) + "%";
+    $("oF").textContent = usd(fees); $("oG").textContent = usd(giant);
+    $("oH").textContent = SG ? (px ? amt(per / px) + " " + SG.symbol : "—") : usd(per);
+    $("oHs").textContent = SG ? "≈ " + usd(per) + " of $" + SG.symbol : "pick a giant to see it in its own coin";
+    $("oM").textContent = SG && px ? amt(per * 30 / px) + " " + SG.symbol + " · " + usd(per * 30) : usd(per * 30);
+    $("oP").textContent = px ? usd(px) : "—";
+  }
+  function choose(g) { SG = g; Array.prototype.forEach.call($("picks").querySelectorAll("button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-m") === (g && g.mint))); }); sim(); }
+  function showPicks(list) {
+    $("picks").innerHTML = list.length ? list.map(function (g) { return '<button type="button" data-m="' + esc(g.mint) + '" aria-pressed="false">$' + esc(g.symbol) + "</button>"; }).join("") : "<em>nothing found on solana</em>";
+    Array.prototype.forEach.call($("picks").querySelectorAll("button"), function (b, i) { b.addEventListener("click", function () { choose(list[i]); }); });
+    if (list[0]) choose(list[0]);
+  }
+  $("sform").addEventListener("submit", function (e) {
+    e.preventDefault(); var q = ($("sq").value || "").trim(); if (!q) return;
+    $("picks").innerHTML = "<em>…</em>";
+    getJ("/api/search?q=" + encodeURIComponent(q)).then(function (j) { showPicks(j.results || []); }, function () { $("picks").innerHTML = "<em>market data unavailable right now</em>"; });
+  });
+  $("vol").addEventListener("input", sim); $("fee").addEventListener("input", sim);
+  ready.then(function () { if (GM) showPicks([{ mint: GM.mint, symbol: GM.symbol, priceUsd: GM.priceUsd }]); else sim(); });
+  sim();
+
+  // ---------- share card for a checked wallet
+  var lastCheck = null;
+  $("rcard").addEventListener("click", function () {
+    if (!lastCheck) return;
+    var c = document.createElement("canvas"); c.width = 1200; c.height = 675; var x = c.getContext("2d"), M = "'JetBrains Mono','DejaVu Sans Mono',monospace";
+    x.fillStyle = "#000"; x.fillRect(0, 0, 1200, 675);
+    for (var i = 0; i < 260; i++) { x.fillStyle = "rgba(255,255,255," + (0.08 + ((i * 37) % 10) / 40) + ")"; x.font = "700 14px " + M; x.fillText(i % 9 ? "." : "+", (i * 211.7) % 1200, (i * 97.3) % 675); }
+    x.strokeStyle = "#fff"; x.lineWidth = 4; x.beginPath(); x.arc(108, 92, 24, 0, 7); x.stroke(); x.lineWidth = 2; x.beginPath(); x.ellipse(110, 95, 46, 12, -0.35, 0, 7); x.stroke(); x.fillStyle = "#fff"; x.beginPath(); x.arc(158, 70, 6, 0, 7); x.fill();
+    x.font = "800 30px " + M; x.fillText("host", 182, 104);
+    x.font = "600 18px " + M; x.fillStyle = "#777"; x.fillText("THE MOON DROPPED ON", 80, 250); x.fillStyle = "#fff"; x.fillText(short(lastCheck.w), 80, 282);
+    var big = lastCheck.got ? amt(lastCheck.got) + " " + lastCheck.sym : "not yet";
+    var fs = 120; x.font = "800 " + fs + "px " + M; while (x.measureText(big).width > 1040 && fs > 50) { fs -= 6; x.font = "800 " + fs + "px " + M; }
+    x.fillText(big, 76, 420);
+    x.font = "600 22px " + M; x.fillStyle = "#9a9a9a"; x.fillText(lastCheck.got ? (lastCheck.usd ? "≈ " + lastCheck.usd + " now · " : "") + lastCheck.rounds + " round" + (lastCheck.rounds > 1 ? "s" : "") : "hold the giant. wait for the moon.", 80, 478);
+    x.fillStyle = "#555"; x.font = "500 18px " + M; x.fillText("PAIR WITH A GIANT · PAY ITS HOLDERS", 80, 610); x.textAlign = "right"; x.fillText(location.host, 1120, 610);
+    c.toBlob(function (b) { if (!b) return; var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "host-" + lastCheck.w.slice(0, 6) + ".png"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("card saved"); }, "image/png");
+  });
+
+  // ---------- reveal on scroll
+  (function () {
+    var els = document.querySelectorAll(".rv");
+    if (!("IntersectionObserver" in window)) { Array.prototype.forEach.call(els, function (e) { e.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }); }, { rootMargin: "0px 0px -6% 0px" });
+    Array.prototype.forEach.call(els, function (e) { io.observe(e); });
+  })();
 })();
 
 </script>
